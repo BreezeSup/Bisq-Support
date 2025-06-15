@@ -1,0 +1,95 @@
+name: Create 50 Custom Issues
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  post_issues:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Post 50 Customized Issues with Metadata
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = [
+              { title: "🐛 Bug: Wallet fails to sync after restart", body: "Users report Bisq wallet remains stuck at 'Syncing DAO state' after restarting the app.", labels: ["bug", "sync", "critical"] },
+              { title: "🐛 Bug: Incorrect BTC balance after trade", body: "BTC balance doesn’t update correctly after a completed trade without restart.", labels: ["bug", "wallet", "balance"] },
+              { title: "🐛 Bug: Fee estimation stuck on testnet", body: "Fee estimation fails on testnet, preventing order creation.", labels: ["bug", "fees", "testnet"] },
+              { title: "🐛 Bug: Trades fail due to incorrect SPV file", body: "Some trades fail because the local SPV chain file is outdated or corrupted.", labels: ["bug", "SPV", "trade"] },
+              { title: "🐛 Bug: Tor connection drop causes wallet disconnect", body: "Bisq loses access to wallet functions when Tor connection drops.", labels: ["bug", "Tor", "connectivity"] },
+              { title: "🐛 Bug: Fiat price feed stuck on old data", body: "Market price does not update, affecting offer creation.", labels: ["bug", "price-feed", "UX"] },
+              { title: "🐛 Bug: DAO proposal voting fails silently", body: "Voting transactions appear sent but never confirm on-chain.", labels: ["bug", "DAO", "voting"] },
+              { title: "🐛 Bug: Market data panel crashes UI", body: "Switching between fiat currencies in the market data panel crashes the UI.", labels: ["bug", "UI", "market"] },
+              { title: "🐛 Bug: Payment account form does not validate IBAN", body: "Invalid IBANs are accepted and cause failed payouts.", labels: ["bug", "payment-methods", "validation"] },
+              { title: "🐛 Bug: Trade chat not delivering messages", body: "Messages sent in arbitration chat don’t appear for recipient.", labels: ["bug", "trade", "chat"] },
+              { title: "💥 UX: Improve wording on 'Security Deposit'", body: "Clarify the tooltip and message around the purpose and return of security deposits.", labels: ["enhancement", "UX", "wallet"] },
+              { title: "💥 UX: Auto-suggest payment methods by region", body: "Bisq should recommend commonly used payment methods based on user country.", labels: ["enhancement", "payment-methods", "UX"] },
+              { title: "💥 UX: Show full transaction fees before trade confirm", body: "Users should see all involved BTC fees (miner, trading, security) before confirming.", labels: ["enhancement", "fees", "UX"] },
+              { title: "💥 UX: Dark mode contrast too low in settings panel", body: "Some elements in dark mode are unreadable on high DPI displays.", labels: ["enhancement", "UX", "theme"] },
+              { title: "💥 UX: Auto-fill BTC address from clipboard", body: "Detect and offer to paste valid BTC address from clipboard on send screen.", labels: ["enhancement", "UX", "wallet"] },
+              { title: "🛠 Feature: Add PayID support", body: "Allow users to receive payments using PayID as an alternative to traditional bank fields.", labels: ["feature", "payments"] },
+              { title: "🛠 Feature: Add Lightning network integration", body: "Experimental support for LN-based trading to reduce time and fees.", labels: ["feature", "Lightning", "trade"] },
+              { title: "🛠 Feature: Add watch-only wallets", body: "Allow users to monitor wallet addresses without importing private keys.", labels: ["feature", "wallet"] },
+              { title: "🛠 Feature: Support exporting trade history to CSV", body: "Enable users to download trade and DAO activity for tax/reporting.", labels: ["feature", "reporting"] },
+              { title: "🛠 Feature: Add option to broadcast raw TX manually", body: "Allow broadcasting raw transactions via Tor if built-in p2p broadcast fails.", labels: ["feature", "wallet", "broadcast"] },
+              { title: "🐛 Bug: Wallet occasionally shows negative BTC balance", body: "Negative balances are shown after SPV resync under specific edge cases.", labels: ["bug", "wallet", "balance"] },
+              { title: "🐛 Bug: Offer remains open after timeout", body: "Offerbook incorrectly lists expired offers until restart.", labels: ["bug", "offerbook", "timeout"] },
+              { title: "🐛 Bug: Crash on macOS 14 when minimizing app", body: "Minimizing Bisq window on new macOS versions causes UI crash.", labels: ["bug", "macOS", "UI"] },
+              { title: "🐛 Bug: Wallet backup fails silently", body: "Backup wallet button appears successful but creates corrupted file.", labels: ["bug", "backup", "wallet"] },
+              { title: "💥 UX: Make arbitrator response time visible", body: "Users should see average arbitrator response times before trade.", labels: ["enhancement", "UX", "arbitration"] },
+              { title: "💥 UX: Better error when wallet path is locked", body: "App should clearly report when wallet file is open elsewhere (e.g., backup tool).", labels: ["enhancement", "UX", "error"] },
+              { title: "💥 UX: Add 'copy txid' button in transaction history", body: "Convenient button to copy transaction ID for support or tracking.", labels: ["enhancement", "wallet", "UX"] },
+              { title: "💥 UX: Show fiat equivalent in wallet balance", body: "Help users understand BTC holdings in their local currency.", labels: ["enhancement", "wallet", "UI"] },
+              { title: "🛠 Feature: Integrate decentralized price oracle", body: "Avoid central price feeds and implement decentralized price discovery.", labels: ["feature", "price-feed"] },
+              { title: "🛠 Feature: Add seed phrase change option", body: "Allow users to rotate wallet seed and migrate funds within app.", labels: ["feature", "wallet", "security"] },
+              { title: "🛠 Feature: Enable multisig for wallet storage", body: "Use multisig structure internally to secure funds in Bisq wallet.", labels: ["feature", "security", "wallet"] },
+              { title: "🔐 Security: Add 2FA for UI access", body: "Require 2FA for launching and accessing Bisq app to improve local security.", labels: ["security", "UX"] },
+              { title: "🔐 Security: Use biometric auth for wallet unlock", body: "Support Windows Hello / Touch ID as optional unlock layer.", labels: ["security", "wallet"] },
+              { title: "🔐 Security: Alert user if Tor exit node is suspicious", body: "Detect suspicious Tor behavior and notify user about potential privacy risks.", labels: ["security", "Tor"] },
+              { title: "📉 Performance: Improve startup time on low RAM devices", body: "Wallet takes over 3 minutes to launch on 4GB RAM laptops.", labels: ["performance", "startup"] },
+              { title: "📉 Performance: Slow wallet UI with 100+ trades", body: "App becomes unresponsive when navigating large trade history.", labels: ["performance", "UI"] },
+              { title: "📉 Performance: Reduce memory usage in background", body: "Idle app consumes 800MB RAM; needs optimization.", labels: ["performance", "memory"] },
+              { title: "🐛 Bug: DAO fails to sync over poor networks", body: "DAO state does not complete sync under high latency internet.", labels: ["bug", "DAO", "sync"] },
+              { title: "🐛 Bug: 'Invalid trade state' error after arbitration", body: "Some users encounter this bug post-resolution of disputes.", labels: ["bug", "trade", "arbitration"] },
+              { title: "💡 Feature: Support multiple wallets/accounts", body: "Allow users to manage more than one Bisq wallet or BTC account.", labels: ["feature", "wallet", "multi-account"] },
+              { title: "💡 Feature: Schedule recurring trades", body: "Enable users to set up periodic BTC buys/sells like DCA.", labels: ["feature", "trade", "DCA"] },
+              { title: "💡 Feature: Add direct Lightning P2P chat", body: "Enable users to chat securely off-chain with trade partners via LN.", labels: ["feature", "UX", "chat"] },
+              { title: "🧪 Test: Create mock trade simulator", body: "Useful for testing new traders or debugging issues in demo mode.", labels: ["testing", "trade"] },
+              { title: "🧪 Test: Automate regression tests for DAO voting", body: "Ensure proposal voting works in various wallet sync states.", labels: ["testing", "DAO"] },
+              { title: "📚 Docs: Add setup guide for Linux CLI mode", body: "Bisq CLI mode on Linux lacks complete documentation.", labels: ["docs", "setup", "Linux"] },
+              { title: "📚 Docs: Add example JSON for config files", body: "Show example config files to assist with advanced setup.", labels: ["docs", "config"] },
+              { title: "📚 Docs: Add warning about backup file location", body: "Users should be warned not to store wallet backups on cloud drives.", labels: ["docs", "wallet", "security"] }
+            ];
+
+            const milestoneTitle = "v1.0";
+            const assignees = ["BreezeSup"];
+
+            const { data: milestones } = await github.rest.issues.listMilestones({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const milestone = milestones.find(m => m.title === milestoneTitle);
+            if (!milestone) {
+              throw new Error(`❌ Milestone '${milestoneTitle}' not found.`);
+            }
+
+            for (const issue of issues) {
+              const response = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: issue.title,
+                body: issue.body,
+                labels: issue.labels,
+                assignees,
+                milestone: milestone.number
+              });
+
+              console.log(`✅ Created: ${response.data.title} — ${response.data.html_url}`);
+            }
